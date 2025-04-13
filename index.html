@@ -1,0 +1,962 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Prometheus - A Chama do Conhecimento</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.0.0/css/all.min.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&family=Cormorant+Garamond:wght@300;400;600&family=Montserrat:wght@300;400;600&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --black: #0a0a0a;
+            --deep-blue: #0c1b33;
+            --midnight-blue: #1a2a40;
+            --gold: #d4af37;
+            --gold-light: #f1d078;
+            --fire-red: #e25822;
+            --fire-orange: #f2a51a;
+        }
+        
+        body {
+            font-family: 'Montserrat', sans-serif;
+            background-color: var(--black);
+            color: #fff;
+            overflow-x: hidden;
+        }
+        
+        .cinzel {
+            font-family: 'Cinzel', serif;
+        }
+        
+        .cormorant {
+            font-family: 'Cormorant Garamond', serif;
+        }
+        
+        .gradient-text {
+            background: linear-gradient(to right, var(--gold), var(--fire-orange), var(--gold-light));
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+        }
+        
+        .hero-bg {
+            background: linear-gradient(to bottom, rgba(10,10,10,0.9), rgba(26,42,64,0.95)), url('https://images.unsplash.com/photo-1534447677768-be436bb09401?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80');
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed;
+        }
+        
+        .section-bg {
+            background: linear-gradient(to bottom, var(--deep-blue), var(--black));
+        }
+        
+        .gold-border {
+            border: 1px solid var(--gold);
+        }
+        
+        .hermetic-symbol {
+            position: absolute;
+            opacity: 0.1;
+            z-index: 0;
+        }
+        
+        .card {
+            background: linear-gradient(135deg, rgba(26,42,64,0.8), rgba(10,10,10,0.8));
+            backdrop-filter: blur(5px);
+            border: 1px solid rgba(212, 175, 55, 0.2);
+            transition: all 0.3s ease;
+        }
+        
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 30px rgba(212, 175, 55, 0.2);
+            border: 1px solid rgba(212, 175, 55, 0.4);
+        }
+        
+        .flame {
+            position: absolute;
+            width: 20px;
+            height: 20px;
+            background: radial-gradient(ellipse at center, var(--fire-orange) 0%, var(--fire-red) 100%);
+            border-radius: 50% 50% 50% 50% / 40% 40% 60% 60%;
+            animation: flicker 3s infinite alternate;
+            transform-origin: center bottom;
+            opacity: 0.8;
+            filter: blur(1px);
+        }
+        
+        @keyframes flicker {
+            0%, 100% {
+                opacity: 0.8;
+                transform: scale(1) rotate(-2deg);
+            }
+            25% {
+                opacity: 0.7;
+                transform: scale(0.95) rotate(1deg);
+            }
+            50% {
+                opacity: 0.9;
+                transform: scale(1.05) rotate(-1deg);
+            }
+            75% {
+                opacity: 0.8;
+                transform: scale(0.97) rotate(2deg);
+            }
+        }
+        
+        .torch {
+            position: relative;
+            width: 10px;
+            height: 60px;
+            background: linear-gradient(to bottom, #654321, #321);
+            margin: 0 auto;
+        }
+        
+        .fire-container {
+            overflow: hidden;
+            position: relative;
+            height: 100%;
+        }
+        
+        .form-input {
+            background-color: rgba(12, 27, 51, 0.6);
+            border: 1px solid rgba(212, 175, 55, 0.3);
+            color: white;
+            transition: all 0.3s ease;
+        }
+        
+        .form-input:focus {
+            border-color: var(--gold);
+            box-shadow: 0 0 0 2px rgba(212, 175, 55, 0.2);
+            outline: none;
+        }
+        
+        .btn-gold {
+            background: linear-gradient(to right, var(--gold), var(--gold-light));
+            color: var(--black);
+            transition: all 0.3s ease;
+        }
+        
+        .btn-gold:hover {
+            background: linear-gradient(to right, var(--gold-light), var(--gold));
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(212, 175, 55, 0.3);
+        }
+        
+        .social-icon {
+            color: var(--gold);
+            transition: all 0.3s ease;
+        }
+        
+        .social-icon:hover {
+            color: var(--fire-orange);
+            transform: translateY(-3px);
+        }
+        
+        /* Animações de partículas */
+        .particles {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            z-index: 0;
+        }
+        
+        .particle {
+            position: absolute;
+            width: 2px;
+            height: 2px;
+            background-color: var(--gold-light);
+            border-radius: 50%;
+            opacity: 0;
+            animation: particles-up 10s infinite;
+        }
+        
+        @keyframes particles-up {
+            0% {
+                transform: translateY(100vh) translateX(0);
+                opacity: 0;
+            }
+            20% {
+                opacity: 0.6;
+            }
+            80% {
+                opacity: 0.6;
+            }
+            100% {
+                transform: translateY(-50vh) translateX(20px);
+                opacity: 0;
+            }
+        }
+        
+        /* Scroll animações */
+        .fade-in {
+            opacity: 0;
+            transform: translateY(20px);
+            transition: opacity 0.8s ease, transform 0.8s ease;
+        }
+        
+        .fade-in.appear {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* Symbol animation */
+        .rotating-symbol {
+            animation: rotate 30s linear infinite;
+        }
+        
+        @keyframes rotate {
+            from {
+                transform: rotate(0deg);
+            }
+            to {
+                transform: rotate(360deg);
+            }
+        }
+        
+        /* Torch animation */
+        .torch-flame {
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 30px;
+            height: 40px;
+            background: radial-gradient(ellipse at center, var(--fire-orange) 0%, var(--fire-red) 80%);
+            border-radius: 50% 50% 20% 20% / 40% 40% 60% 60%;
+            animation: torch-flicker 3s infinite alternate;
+            filter: blur(1px);
+        }
+        
+        @keyframes torch-flicker {
+            0%, 100% {
+                height: 40px;
+                opacity: 1;
+                border-radius: 50% 50% 20% 20% / 40% 40% 60% 60%;
+            }
+            25% {
+                height: 35px;
+                opacity: 0.8;
+                border-radius: 40% 40% 20% 20% / 30% 30% 70% 70%;
+            }
+            50% {
+                height: 45px;
+                opacity: 0.9;
+                border-radius: 60% 60% 30% 30% / 50% 50% 50% 50%;
+            }
+            75% {
+                height: 38px;
+                opacity: 0.85;
+                border-radius: 50% 50% 25% 25% / 40% 40% 60% 60%;
+            }
+        }
+        
+        /* Custom scrollbar */
+        ::-webkit-scrollbar {
+            width: 10px;
+            background-color: var(--black);
+        }
+        
+        ::-webkit-scrollbar-thumb {
+            background: linear-gradient(to bottom, var(--gold), var(--fire-red));
+            border-radius: 5px;
+        }
+        
+        /* Responsiveness */
+        @media (max-width: 768px) {
+            .xl-title {
+                font-size: 2.5rem;
+            }
+            
+            .lg-title {
+                font-size: 2rem;
+            }
+            
+            .md-title {
+                font-size: 1.5rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Navbar -->
+    <nav class="fixed top-0 left-0 w-full py-4 z-50 transition-all duration-300" id="navbar">
+        <div class="container mx-auto px-4 flex justify-between items-center">
+            <a href="#" class="flex items-center">
+                <div class="relative w-8 h-8 mr-2">
+                    <div class="torch"></div>
+                    <div class="torch-flame"></div>
+                </div>
+                <span class="text-2xl cinzel font-bold gradient-text">Prometheus</span>
+            </a>
+            <div class="hidden md:flex space-x-8">
+                <a href="#sobre" class="text-white hover:text-gold-light transition-colors">Sobre</a>
+                <a href="#leis" class="text-white hover:text-gold-light transition-colors">Leis Herméticas</a>
+                <a href="#ebook" class="text-white hover:text-gold-light transition-colors">Ebook Gratuito</a>
+                <a href="#jornada" class="text-white hover:text-gold-light transition-colors">Jornada Iniciática</a>
+            </div>
+            <div class="md:hidden">
+                <button id="menuBtn" class="text-white">
+                    <i class="fas fa-bars text-2xl"></i>
+                </button>
+            </div>
+        </div>
+        <!-- Mobile menu -->
+        <div id="mobileMenu" class="hidden md:hidden w-full bg-opacity-95 bg-black">
+            <div class="container mx-auto px-4 py-4 flex flex-col space-y-4">
+                <a href="#sobre" class="text-white hover:text-gold-light transition-colors">Sobre</a>
+                <a href="#leis" class="text-white hover:text-gold-light transition-colors">Leis Herméticas</a>
+                <a href="#ebook" class="text-white hover:text-gold-light transition-colors">Ebook Gratuito</a>
+                <a href="#jornada" class="text-white hover:text-gold-light transition-colors">Jornada Iniciática</a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="hero-bg min-h-screen flex items-center justify-center relative py-20">
+        <div class="particles">
+            <!-- Partículas serão geradas via JavaScript -->
+        </div>
+        <div class="container mx-auto px-4 z-10 pt-16">
+            <div class="flex flex-col md:flex-row items-center">
+                <div class="md:w-1/2 mb-10 md:mb-0">
+                    <h1 class="xl-title text-5xl md:text-6xl cinzel font-bold mb-6">
+                        <span class="gradient-text">Prometheus</span> deu-nos o fogo.<br>
+                        <span class="text-4xl md:text-5xl">O que faremos com ele?</span>
+                    </h1>
+                    <p class="cormorant text-xl md:text-2xl mb-8 leading-relaxed">
+                        A <span class="text-gold">chama do conhecimento</span> espera por aqueles que buscam a sabedoria ancestral em tempos modernos. 
+                        Desperte para as verdades herméticas e descubra o poder que já existe dentro de você.
+                    </p>
+                    <div class="flex flex-col sm:flex-row space-y-4 sm:space-y-0 sm:space-x-4">
+                        <a href="#ebook" class="btn-gold py-3 px-6 rounded-full text-center font-bold">
+                            Despertar Agora
+                        </a>
+                        <a href="#jornada" class="border border-gold text-gold hover:bg-gold hover:bg-opacity-10 py-3 px-6 rounded-full text-center transition-all">
+                            Conhecer a Jornada
+                        </a>
+                    </div>
+                </div>
+                <div class="md:w-1/2 relative">
+                    <div class="relative w-full h-96">
+                        <!-- Rotating symbol -->
+                        <img src="https://i.pinimg.com/564x/8c/37/29/8c3729bd2f656621a1137d471b7f7c60.jpg" alt="Símbolo Hermético" class="rotating-symbol absolute w-64 h-64 opacity-40 top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2">
+                        
+                        <!-- Prometheus image -->
+                        <img src="https://www.greekmythologyinart.com/uploads/5/3/1/3/53133595/cossiers-prometheus-carrying-fire.jpg" alt="Prometheus carregando o fogo" class="rounded-lg shadow-2xl absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-72 h-80 object-cover z-10 border-2 border-gold">
+                        
+                        <!-- Animated flames around image -->
+                        <div class="flame absolute" style="top: 20%; left: 30%;"></div>
+                        <div class="flame absolute" style="top: 40%; left: 20%; animation-delay: 0.5s;"></div>
+                        <div class="flame absolute" style="top: 60%; left: 25%; animation-delay: 1s;"></div>
+                        <div class="flame absolute" style="top: 30%; left: 80%; animation-delay: 1.5s;"></div>
+                        <div class="flame absolute" style="top: 50%; left: 75%; animation-delay: 2s;"></div>
+                        <div class="flame absolute" style="top: 70%; left: 70%; animation-delay: 2.5s;"></div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Social Media Links -->
+            <div class="flex justify-center mt-16 space-x-6">
+                <a href="https://www.youtube.com/@Prometheus36" target="_blank" class="social-icon">
+                    <i class="fab fa-youtube text-3xl"></i>
+                </a>
+                <a href="https://www.instagram.com/prometheus.36/" target="_blank" class="social-icon">
+                    <i class="fab fa-instagram text-3xl"></i>
+                </a>
+                <a href="https://www.tiktok.com/@prometheus.36" target="_blank" class="social-icon">
+                    <i class="fab fa-tiktok text-3xl"></i>
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Sobre Section -->
+    <section id="sobre" class="section-bg py-20">
+        <div class="container mx-auto px-4">
+            <div class="text-center mb-16">
+                <h2 class="lg-title text-4xl cinzel font-bold mb-4">
+                    <span class="gradient-text">Conceito & Significado</span>
+                </h2>
+                <p class="cormorant text-xl max-w-3xl mx-auto">
+                    O mito de Prometheus vai além do roubo do fogo divino. É o símbolo da busca pelo conhecimento 
+                    que liberta, da coragem de desafiar o estabelecido e da responsabilidade de compartilhar a sabedoria.
+                </p>
+            </div>
+            
+            <div class="flex flex-col md:flex-row items-center justify-between space-y-12 md:space-y-0 md:space-x-8">
+                <div class="md:w-1/2 relative fade-in">
+                    <div class="relative">
+                        <div class="absolute inset-0 bg-gradient-to-tr from-fire-red to-gold opacity-20 rounded-lg"></div>
+                        <div class="card p-8 rounded-lg relative z-10">
+                            <h3 class="text-2xl cinzel font-semibold mb-4 text-gold">Nossa Missão</h3>
+                            <p class="mb-6 leading-relaxed">
+                                Assim como Prometheus roubou o fogo dos deuses e o entregou à humanidade, 
+                                nossa missão é recuperar a sabedoria ancestral das leis herméticas e torná-la 
+                                acessível ao homem moderno, permitindo que cada indivíduo desperte seu 
+                                potencial adormecido.
+                            </p>
+                            <p class="leading-relaxed">
+                                Buscamos a <span class="text-gold">compreensão profunda</span> e uma 
+                                <span class="text-gold">visão espiritualista</span> que nos liberta do 
+                                materialismo, resgatando a ancestralidade e reconectando-nos com as leis naturais 
+                                que governam o cosmos e nossa existência.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="md:w-1/2 relative fade-in" style="animation-delay: 0.3s;">
+                    <div class="relative">
+                        <div class="absolute inset-0 bg-gradient-to-bl from-deep-blue to-midnight-blue opacity-40 rounded-lg"></div>
+                        <div class="card p-8 rounded-lg relative z-10">
+                            <h3 class="text-2xl cinzel font-semibold mb-4 text-gold">Wallace - Fundador</h3>
+                            <p class="mb-6 leading-relaxed">
+                                Filósofo, espiritualista e estudioso dedicado às ciências ocultas e à antropologia, 
+                                Wallace sentiu o chamado para compartilhar seu conhecimento através do projeto Prometheus.
+                            </p>
+                            <p class="leading-relaxed">
+                                "O verdadeiro conhecimento hermético não é apenas uma teoria abstrata, mas uma 
+                                prática transformadora que nos recorda que somos parte de algo maior. Nossa jornada é 
+                                redescobrir esta conexão perdida com as forças que regem o universo e nossa própria natureza."
+                            </p>
+                            <div class="mt-6 flex justify-end">
+                                <span class="text-gold italic">- Wallace</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Leis Herméticas Section -->
+    <section id="leis" class="py-20 relative overflow-hidden">
+        <div class="hermetic-symbol" style="top: 10%; left: 5%; width: 150px; height: 150px;">
+            <img src="https://i.pinimg.com/564x/60/e4/28/60e428933951760aef92edfdbb01bc98.jpg" alt="Símbolo Hermético" class="w-full h-full">
+        </div>
+        <div class="hermetic-symbol" style="top: 60%; right: 5%; width: 200px; height: 200px;">
+            <img src="https://i.etsystatic.com/19475826/r/il/222b8d/3689805841/il_1080xN.3689805841_m6n2.jpg" alt="Símbolo Hermético" class="w-full h-full">
+        </div>
+        
+        <div class="container mx-auto px-4 relative z-10">
+            <div class="text-center mb-16">
+                <h2 class="lg-title text-4xl cinzel font-bold mb-4">
+                    <span class="gradient-text">As Sete Leis Herméticas</span>
+                </h2>
+                <p class="cormorant text-xl max-w-3xl mx-auto">
+                    As verdades fundamentais do Caibalion e do conhecimento hermético, 
+                    reinterpretadas para o mundo contemporâneo.
+                </p>
+            </div>
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                <!-- Lei 1 -->
+                <div class="card p-6 rounded-lg fade-in">
+                    <div class="flex items-center mb-4">
+                        <div class="w-12 h-12 rounded-full bg-gradient-to-r from-gold to-fire-orange flex items-center justify-center mr-4">
+                            <span class="text-black font-bold">1</span>
+                        </div>
+                        <h3 class="text-xl cinzel font-semibold text-gold">Mentalismo</h3>
+                    </div>
+                    <p class="font-light">"O Todo é Mente, o Universo é Mental."</p>
+                    <p class="mt-4">Na era digital, compreender que a realidade é construída pelo pensamento é mais relevante do que nunca. A mente cria a experiência.</p>
+                </div>
+                
+                <!-- Lei 2 -->
+                <div class="card p-6 rounded-lg fade-in" style="animation-delay: 0.2s;">
+                    <div class="flex items-center mb-4">
+                        <div class="w-12 h-12 rounded-full bg-gradient-to-r from-gold to-fire-orange flex items-center justify-center mr-4">
+                            <span class="text-black font-bold">2</span>
+                        </div>
+                        <h3 class="text-xl cinzel font-semibold text-gold">Correspondência</h3>
+                    </div>
+                    <p class="font-light">"O que está em cima é como o que está embaixo."</p>
+                    <p class="mt-4">Os padrões se repetem em todas as escalas. O microcosmo e o macrocosmo refletem-se mutuamente, revelando a harmonia universal.</p>
+                </div>
+                
+                <!-- Lei 3 -->
+                <div class="card p-6 rounded-lg fade-in" style="animation-delay: 0.4s;">
+                    <div class="flex items-center mb-4">
+                        <div class="w-12 h-12 rounded-full bg-gradient-to-r from-gold to-fire-orange flex items-center justify-center mr-4">
+                            <span class="text-black font-bold">3</span>
+                        </div>
+                        <h3 class="text-xl cinzel font-semibold text-gold">Vibração</h3>
+                    </div>
+                    <p class="font-light">"Nada está parado, tudo se move, tudo vibra."</p>
+                    <p class="mt-4">A ciência moderna confirma o que os antigos já sabiam. Das ondas quânticas às emoções humanas, tudo é energia vibrando em diferentes frequências.</p>
+                </div>
+                
+                <!-- Lei 4 -->
+                <div class="card p-6 rounded-lg fade-in" style="animation-delay: 0.6s;">
+                    <div class="flex items-center mb-4">
+                        <div class="w-12 h-12 rounded-full bg-gradient-to-r from-gold to-fire-orange flex items-center justify-center mr-4">
+                            <span class="text-black font-bold">4</span>
+                        </div>
+                        <h3 class="text-xl cinzel font-semibold text-gold">Polaridade</h3>
+                    </div>
+                    <p class="font-light">"Tudo é duplo, tudo tem dois polos."</p>
+                    <p class="mt-4">No mundo de extremos, compreender que os opostos são idênticos em natureza nos permite encontrar o equilíbrio e transcender as dualidades.</p>
+                </div>
+                
+                <!-- Lei 5 -->
+                <div class="card p-6 rounded-lg fade-in" style="animation-delay: 0.8s;">
+                    <div class="flex items-center mb-4">
+                        <div class="w-12 h-12 rounded-full bg-gradient-to-r from-gold to-fire-orange flex items-center justify-center mr-4">
+                            <span class="text-black font-bold">5</span>
+                        </div>
+                        <h3 class="text-xl cinzel font-semibold text-gold">Ritmo</h3>
+                    </div>
+                    <p class="font-light">"Tudo flui, dentro e fora; tudo tem suas marés."</p>
+                    <p class="mt-4">Reconhecer os ciclos naturais e artificiais da vida contemporânea nos permite fluir com eles em vez de resistir, encontrando harmonia no movimento.</p>
+                </div>
+                
+                <!-- Lei 6 -->
+                <div class="card p-6 rounded-lg fade-in" style="animation-delay: 1s;">
+                    <div class="flex items-center mb-4">
+                        <div class="w-12 h-12 rounded-full bg-gradient-to-r from-gold to-fire-orange flex items-center justify-center mr-4">
+                            <span class="text-black font-bold">6</span>
+                        </div>
+                        <h3 class="text-xl cinzel font-semibold text-gold">Causa e Efeito</h3>
+                    </div>
+                    <p class="font-light">"Toda causa tem seu efeito, todo efeito tem sua causa."</p>
+                    <p class="mt-4">Em uma era de vitimização, este princípio restaura a responsabilidade pessoal e o poder de moldar nosso destino através de nossas escolhas.</p>
+                </div>
+                
+                <!-- Lei 7 -->
+                <div class="card p-6 rounded-lg fade-in" style="animation-delay: 1.2s; grid-column: span 3;">
+                    <div class="flex items-center mb-4">
+                        <div class="w-12 h-12 rounded-full bg-gradient-to-r from-gold to-fire-orange flex items-center justify-center mr-4">
+                            <span class="text-black font-bold">7</span>
+                        </div>
+                        <h3 class="text-xl cinzel font-semibold text-gold">Gênero</h3>
+                    </div>
+                    <p class="font-light">"O Gênero está em tudo; tudo tem seu princípio Masculino e Feminino."</p>
+                    <p class="mt-4">Além dos estereótipos sociais, este princípio revela as energias complementares presentes em cada aspecto da existência, convidando-nos a integrar estas forças em nós mesmos.</p>
+                </div>
+            </div>
+            
+            <div class="mt-16 text-center">
+                <a href="#ebook" class="btn-gold py-3 px-6 rounded-full text-center font-bold inline-block">
+                    Aprofundar nas Leis Herméticas
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- A Voz do Silêncio Section -->
+    <section class="section-bg py-20">
+        <div class="container mx-auto px-4">
+            <div class="flex flex-col md:flex-row items-center space-y-10 md:space-y-0">
+                <div class="md:w-1/2 pr-0 md:pr-12 fade-in">
+                    <h2 class="md-title text-3xl cinzel font-bold mb-6">
+                        <span class="gradient-text">A Voz do Silêncio</span><br>
+                        <span class="text-white text-2xl">Helena Petrovna Blavatsky</span>
+                    </h2>
+                    <p class="mb-6 leading-relaxed">
+                        Esta obra-prima da literatura mística, traduzida para o português por Fernando Pessoa, 
+                        contém fragmentos do Livro dos Preceitos de Ouro - uma fonte ancestral de sabedoria espiritual.
+                    </p>
+                    <p class="mb-6 leading-relaxed">
+                        "A Voz do Silêncio" oferece um guia para o desenvolvimento espiritual, aprofundando-se 
+                        na jornada da alma e nos desafios que todos enfrentamos no caminho para o autoconhecimento.
+                    </p>
+                    <blockquote class="border-l-4 border-gold pl-4 italic text-gold-light mb-6">
+                        "Antes que a alma possa ver, deve ser conseguida a harmonia interior, e os olhos da carne tornados cegos a toda a ilusão."
+                    </blockquote>
+                    <p>
+                        Em nosso ebook gratuito, reinterpretamos estes ensinamentos para o homem moderno, 
+                        revelando como aplicá-los na vida contemporânea para encontrar propósito, equilíbrio e 
+                        despertar espiritual.
+                    </p>
+                </div>
+                <div class="md:w-1/2 relative fade-in" style="animation-delay: 0.3s;">
+                    <div class="relative">
+                        <div class="absolute inset-0 bg-gradient-to-r from-deep-blue to-black opacity-70 rounded-lg"></div>
+                        <img src="https://i.pinimg.com/736x/80/ef/1f/80ef1f201676e742c18ddbaa3d108b34.jpg" alt="A Voz do Silêncio" class="rounded-lg w-full h-auto relative z-10 border-2 border-gold opacity-80">
+                        
+                        <!-- Animated flames around image -->
+                        <div class="flame absolute" style="top: 10%; left: 10%;"></div>
+                        <div class="flame absolute" style="top: 20%; right: 10%; animation-delay: 0.7s;"></div>
+                        <div class="flame absolute" style="bottom: 10%; left: 20%; animation-delay: 1.4s;"></div>
+                        <div class="flame absolute" style="bottom: 20%; right: 15%; animation-delay: 2.1s;"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Ebook Gratuito Section -->
+    <section id="ebook" class="py-20 relative">
+        <div class="hermetic-symbol" style="bottom: 10%; right: 5%; width: 150px; height: 150px; transform: rotate(45deg);">
+            <img src="https://i.etsystatic.com/26062825/r/il/2f0541/2826842829/il_1080xN.2826842829_q3no.jpg" alt="Símbolo Hermético" class="w-full h-full">
+        </div>
+        
+        <div class="container mx-auto px-4 relative z-10">
+            <div class="flex flex-col lg:flex-row items-center space-y-12 lg:space-y-0 lg:space-x-12">
+                <div class="lg:w-1/2 relative fade-in">
+                    <div class="relative max-w-md mx-auto">
+                        <div class="absolute inset-0 bg-gradient-to-tr from-fire-red to-gold opacity-20 rounded-lg transform rotate-3"></div>
+                        <div class="absolute inset-0 bg-gradient-to-bl from-deep-blue to-black opacity-30 rounded-lg transform -rotate-3"></div>
+                        <div class="card p-8 rounded-lg relative z-10 transform hover:scale-105 transition-transform duration-500">
+                            <div class="text-center mb-6">
+                                <h3 class="text-2xl cinzel font-bold text-gold">A Chama Ancestral</h3>
+                                <p class="text-lg text-gold-light mt-2">Ebook Gratuito</p>
+                            </div>
+                            
+                            <div class="relative w-full h-64 mb-6">
+                                <div class="absolute inset-0 flex items-center justify-center">
+                                    <div class="w-full h-full bg-gradient-to-r from-fire-red to-gold-light opacity-10 rounded"></div>
+                                    <img src="https://images.fineartamerica.com/images/artworkimages/mediumlarge/1/prometheus-bringing-fire-to-mankind-heinrich-fuger.jpg" alt="Ebook Cover" class="w-40 h-56 object-cover rounded shadow-lg border border-gold">
+                                    <div class="absolute inset-0 flex items-center justify-center opacity-0 hover:opacity-100 transition-opacity duration-300">
+                                        <div class="bg-black bg-opacity-70 p-4 rounded">
+                                            <p class="text-white text-center">Como Despertar o Conhecimento Hermético na Vida Moderna</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <ul class="mb-6 space-y-3">
+                                <li class="flex items-start">
+                                    <i class="fas fa-fire text-gold-light mt-1 mr-3"></i>
+                                    <span>Reinterpretação das 7 Leis Herméticas para aplicação prática</span>
+                                </li>
+                                <li class="flex items-start">
+                                    <i class="fas fa-fire text-gold-light mt-1 mr-3"></i>
+                                    <span>Ensinamentos de "A Voz do Silêncio" para o mundo moderno</span>
+                                </li>
+                                <li class="flex items-start">
+                                    <i class="fas fa-fire text-gold-light mt-1 mr-3"></i>
+                                    <span>Exercícios práticos para despertar sua chama interior</span>
+                                </li>
+                                <li class="flex items-start">
+                                    <i class="fas fa-fire text-gold-light mt-1 mr-3"></i>
+                                    <span>Conexão entre sabedoria ancestral e ciência moderna</span>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="lg:w-1/2 relative fade-in" style="animation-delay: 0.3s;">
+                    <div class="max-w-md mx-auto">
+                        <h2 class="md-title text-3xl cinzel font-bold mb-6">
+                            <span class="gradient-text">Receba Gratuitamente</span>
+                        </h2>
+                        <p class="mb-6 leading-relaxed">
+                            Inscreva-se agora para receber "A Chama Ancestral" diretamente em seu email. 
+                            Este ebook exclusivo é seu primeiro passo na jornada de autodescoberta e 
+                            conexão com as leis universais que regem toda existência.
+                        </p>
+                        
+                        <form id="emailForm" class="space-y-6">
+                            <div>
+                                <label for="name" class="block mb-2 text-gold-light">Nome</label>
+                                <input type="text" id="name" name="name" class="form-input w-full py-3 px-4 rounded-lg" placeholder="Seu nome completo" required>
+                            </div>
+                            <div>
+                                <label for="email" class="block mb-2 text-gold-light">Email</label>
+                                <input type="email" id="email" name="email" class="form-input w-full py-3 px-4 rounded-lg" placeholder="Seu melhor email" required>
+                            </div>
+                            <div class="pt-2">
+                                <button type="submit" class="btn-gold w-full py-3 px-6 rounded-full text-center font-bold">
+                                    Receber Ebook Gratuito
+                                </button>
+                            </div>
+                            <p class="text-sm text-center opacity-70">
+                                Seus dados estão seguros. Não compartilhamos suas informações com terceiros.
+                            </p>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Jornada Iniciática Section -->
+    <section id="jornada" class="hero-bg py-20 relative">
+        <div class="container mx-auto px-4 relative z-10">
+            <div class="text-center mb-16">
+                <h2 class="lg-title text-4xl cinzel font-bold mb-4">
+                    <span class="gradient-text">A Chama Iniciática</span>
+                </h2>
+                <p class="cormorant text-xl max-w-3xl mx-auto">
+                    Um processo iniciático completo para aqueles que desejam ir além,
+                    mergulhando nas profundezas do conhecimento hermético.
+                </p>
+            </div>
+            
+            <div class="max-w-4xl mx-auto">
+                <div class="card p-8 rounded-lg relative fade-in">
+                    <div class="absolute top-0 right-0 -mt-4 -mr-4 bg-gradient-to-r from-gold to-fire-orange px-4 py-2 rounded-full text-black font-bold text-sm">
+                        Exclusivo
+                    </div>
+                    <h3 class="text-2xl cinzel font-semibold mb-6 text-gold">O Processo de Transmutação Hermética</h3>
+                    <p class="mb-6 leading-relaxed">
+                        Inspirado nas antigas escolas de mistérios e adaptado para o buscador moderno, 
+                        "A Chama Iniciática" é um curso estruturado em quatro módulos progressivos que revelam 
+                        camadas cada vez mais profundas do conhecimento hermético.
+                    </p>
+                    
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+                        <div class="border border-gold rounded-lg p-4 hover:bg-gold hover:bg-opacity-10 transition-colors">
+                            <h4 class="text-lg font-semibold text-gold-light mb-2">Módulo 1: A Preparação do Recipiente</h4>
+                            <p>Fundamentos do conhecimento hermético e preparação mental para as etapas seguintes.</p>
+                        </div>
+                        <div class="border border-gold rounded-lg p-4 hover:bg-gold hover:bg-opacity-10 transition-colors">
+                            <h4 class="text-lg font-semibold text-gold-light mb-2">Módulo 2: O Fogo Sagrado</h4>
+                            <p>Aprofundamento nos princípios do Caibalion e na cosmologia hermética.</p>
+                        </div>
+                        <div class="border border-gold rounded-lg p-4 hover:bg-gold hover:bg-opacity-10 transition-colors">
+                            <h4 class="text-lg font-semibold text-gold-light mb-2">Módulo 3: A Chama da Sabedoria</h4>
+                            <p>Aplicação prática dos conhecimentos e desenvolvimento espiritual avançado.</p>
+                        </div>
+                        <div class="border border-gold rounded-lg p-4 hover:bg-gold hover:bg-opacity-10 transition-colors">
+                            <h4 class="text-lg font-semibold text-gold-light mb-2">Módulo 4: O Portador da Luz</h4>
+                            <p>Transmissão do conhecimento e desenvolvimento da autoridade espiritual interior.</p>
+                        </div>
+                    </div>
+                    
+                    <div class="bg-deep-blue bg-opacity-50 p-6 rounded-lg mb-8">
+                        <h4 class="text-xl font-semibold text-gold mb-4">O que você receberá</h4>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div class="flex items-start">
+                                <i class="fas fa-check-circle text-gold-light mt-1 mr-3"></i>
+                                <span>16 aulas em vídeo de alta qualidade</span>
+                            </div>
+                            <div class="flex items-start">
+                                <i class="fas fa-check-circle text-gold-light mt-1 mr-3"></i>
+                                <span>Material escrito complementar</span>
+                            </div>
+                            <div class="flex items-start">
+                                <i class="fas fa-check-circle text-gold-light mt-1 mr-3"></i>
+                                <span>Meditações guiadas e rituais estruturados</span>
+                            </div>
+                            <div class="flex items-start">
+                                <i class="fas fa-check-circle text-gold-light mt-1 mr-3"></i>
+                                <span>Acesso à comunidade exclusiva de iniciados</span>
+                            </div>
+                            <div class="flex items-start">
+                                <i class="fas fa-check-circle text-gold-light mt-1 mr-3"></i>
+                                <span>Sessões de dúvidas ao vivo mensais</span>
+                            </div>
+                            <div class="flex items-start">
+                                <i class="fas fa-check-circle text-gold-light mt-1 mr-3"></i>
+                                <span>Certificado de conclusão personalizado</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="text-center">
+                        <a href="#" class="btn-gold py-4 px-8 rounded-full text-center font-bold inline-block text-lg">
+                            Quero Conhecer Mais
+                        </a>
+                        <p class="mt-4 text-sm opacity-70">
+                            Vagas limitadas. Próxima turma com inscrições em breve.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    
+    <!-- CTA Section -->
+    <section class="section-bg py-16">
+        <div class="container mx-auto px-4">
+            <div class="text-center">
+                <h2 class="md-title text-3xl cinzel font-bold mb-6">
+                    <span class="gradient-text">A Chama Espera Por Você</span>
+                </h2>
+                <p class="cormorant text-xl mb-8 max-w-2xl mx-auto">
+                    "O conhecimento é como o fogo: uma vez aceso, espalha-se por si só." <br>
+                    Dê o primeiro passo hoje em sua jornada de transformação.
+                </p>
+                <a href="#ebook" class="btn-gold py-3 px-6 rounded-full text-center font-bold inline-block">
+                    Receber o Ebook Gratuito
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="bg-black py-12">
+        <div class="container mx-auto px-4">
+            <div class="flex flex-col md:flex-row justify-between items-center">
+                <div class="mb-8 md:mb-0">
+                    <a href="#" class="flex items-center justify-center md:justify-start">
+                        <div class="relative w-8 h-8 mr-2">
+                            <div class="torch"></div>
+                            <div class="torch-flame"></div>
+                        </div>
+                        <span class="text-2xl cinzel font-bold gradient-text">Prometheus</span>
+                    </a>
+                    <p class="mt-4 text-sm opacity-70 max-w-md text-center md:text-left">
+                        Prometheus deu-nos o fogo. Nós despertamos a chama do conhecimento hermético 
+                        para a era moderna.
+                    </p>
+                </div>
+                
+                <div class="flex flex-col items-center md:items-end">
+                    <div class="flex space-x-6 mb-6">
+                        <a href="https://www.youtube.com/@Prometheus36" target="_blank" class="social-icon">
+                            <i class="fab fa-youtube text-2xl"></i>
+                        </a>
+                        <a href="https://www.instagram.com/prometheus.36/" target="_blank" class="social-icon">
+                            <i class="fab fa-instagram text-2xl"></i>
+                        </a>
+                        <a href="https://www.tiktok.com/@prometheus.36" target="_blank" class="social-icon">
+                            <i class="fab fa-tiktok text-2xl"></i>
+                        </a>
+                    </div>
+                    <p class="text-sm opacity-70">
+                        &copy; 2023 Prometheus. Todos os direitos reservados.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Flames for the entire page -->
+    <div id="flames-container" class="fixed top-0 left-0 w-full h-full pointer-events-none z-0"></div>
+
+    <script>
+        // Mobile menu toggle
+        document.getElementById('menuBtn').addEventListener('click', function() {
+            const mobileMenu = document.getElementById('mobileMenu');
+            mobileMenu.classList.toggle('hidden');
+        });
+        
+        // Navbar scroll effect
+        window.addEventListener('scroll', function() {
+            const navbar = document.getElementById('navbar');
+            if (window.scrollY > 50) {
+                navbar.classList.add('bg-black', 'bg-opacity-90', 'shadow-lg');
+            } else {
+                navbar.classList.remove('bg-black', 'bg-opacity-90', 'shadow-lg');
+            }
+        });
+        
+        // Fade in elements on scroll
+        function fadeInOnScroll() {
+            const fadeElements = document.querySelectorAll('.fade-in');
+            fadeElements.forEach(element => {
+                const elementTop = element.getBoundingClientRect().top;
+                const elementBottom = element.getBoundingClientRect().bottom;
+                const isVisible = elementTop < window.innerHeight - 100 && elementBottom > 0;
+                
+                if (isVisible) {
+                    element.classList.add('appear');
+                }
+            });
+        }
+        
+        // Add particles to the page
+        function createParticles() {
+            const particlesContainer = document.querySelector('.particles');
+            const numberOfParticles = 30;
+            
+            for (let i = 0; i < numberOfParticles; i++) {
+                const particle = document.createElement('div');
+                particle.classList.add('particle');
+                
+                // Random position
+                const posX = Math.random() * 100;
+                const delay = Math.random() * 10;
+                const size = Math.random() * 2 + 1;
+                const duration = Math.random() * 10 + 10;
+                
+                particle.style.left = `${posX}%`;
+                particle.style.width = `${size}px`;
+                particle.style.height = `${size}px`;
+                particle.style.animationDelay = `${delay}s`;
+                particle.style.animationDuration = `${duration}s`;
+                
+                particlesContainer.appendChild(particle);
+            }
+        }
+        
+        // Add random flames throughout the page
+        function addRandomFlames() {
+            const flamesContainer = document.getElementById('flames-container');
+            const numberOfFlames = 15;
+            
+            for (let i = 0; i < numberOfFlames; i++) {
+                const flame = document.createElement('div');
+                flame.classList.add('flame');
+                
+                // Random position
+                const posX = Math.random() * 100;
+                const posY = Math.random() * 100;
+                const delay = Math.random() * 3;
+                const size = Math.random() * 15 + 10;
+                
+                flame.style.left = `${posX}%`;
+                flame.style.top = `${posY}%`;
+                flame.style.width = `${size}px`;
+                flame.style.height = `${size}px`;
+                flame.style.animationDelay = `${delay}s`;
+                
+                flamesContainer.appendChild(flame);
+            }
+        }
+        
+        // Form submission handler
+        document.getElementById('emailForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const name = document.getElementById('name').value;
+            const email = document.getElementById('email').value;
+            
+            // Here you would typically send this to your backend
+            console.log(`Form submitted: ${name}, ${email}`);
+            
+            // Show success message
+            const form = document.getElementById('emailForm');
+            form.innerHTML = `
+                <div class="bg-deep-blue bg-opacity-50 p-6 rounded-lg text-center">
+                    <i class="fas fa-check-circle text-gold text-4xl mb-4"></i>
+                    <h4 class="text-xl font-semibold text-gold mb-2">Gratidão, ${name}!</h4>
+                    <p>Seu ebook foi enviado para ${email}.</p>
+                    <p class="mt-4">Verifique sua caixa de entrada ou spam em alguns minutos.</p>
+                </div>
+            `;
+        });
+        
+        // Initialize everything when the page loads
+        window.addEventListener('load', function() {
+            createParticles();
+            addRandomFlames();
+            fadeInOnScroll();
+            
+            // Also trigger the fade in when scrolling
+            window.addEventListener('scroll', fadeInOnScroll);
+        });
+        
+        // Smooth scrolling for anchor links
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                
+                const targetId = this.getAttribute('href');
+                if (targetId === '#') return;
+                
+                const targetElement = document.querySelector(targetId);
+                if (targetElement) {
+                    window.scrollTo({
+                        top: targetElement.offsetTop - 80,
+                        behavior: 'smooth'
+                    });
+                    
+                    // Close mobile menu if open
+                    document.getElementById('mobileMenu').classList.add('hidden');
+                }
+            });
+        });
+    </script>
+</body>
+</html>
